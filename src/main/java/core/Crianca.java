@@ -28,7 +28,7 @@ public class Crianca extends Thread {
         this.tempoDescansarNano = (long) (tdSec * 1_000_000_000L);
         this.cesto = cesto;
         this.temBola = temBola;
-        this.estado = temBola ? EstadoCrianca.BRINCANDO : EstadoCrianca.DESCANSANDO;
+        this.estado = temBola ? EstadoCrianca.BRINCANDO : EstadoCrianca.PEGAR_BOLA;
         
         // Spawn determinístico baseado no ID (1-20)
         inicializarSpawnDeterministico(id);
@@ -88,22 +88,31 @@ public class Crianca extends Thread {
     @Override
     public void run() {
         try {
+            // Se a criança inicia sem bola, ela deve aguardar no cesto antes de começar o ciclo
+            if (!temBola) {
+                setEstado(EstadoCrianca.PEGAR_BOLA);
+                cesto.pegarBola();
+                temBola = true;
+            }
+
             while (!Thread.currentThread().isInterrupted()) {
-                if (temBola) {
-                    setEstado(EstadoCrianca.BRINCANDO);
-                    executarEstado(tempoBrincarNano);
+                // 1. Brincar (Movimento de ida e volta)
+                setEstado(EstadoCrianca.BRINCANDO);
+                executarEstado(tempoBrincarNano);
 
-                    setEstado(EstadoCrianca.GUARDAR_BOLA);
-                    cesto.colocarBola();
-                    temBola = false;
-                } else {
-                    setEstado(EstadoCrianca.DESCANSANDO);
-                    executarEstado(tempoDescansarNano);
+                // 2. Guardar Bola (Bloqueia no cesto - Sem movimento)
+                setEstado(EstadoCrianca.GUARDAR_BOLA);
+                cesto.colocarBola();
+                temBola = false;
 
-                    setEstado(EstadoCrianca.PEGAR_BOLA);
-                    cesto.pegarBola();
-                    temBola = true;
-                }
+                // 3. Descansar (Movimento de ida e volta)
+                setEstado(EstadoCrianca.DESCANSANDO);
+                executarEstado(tempoDescansarNano);
+
+                // 4. Pegar Bola (Bloqueia no cesto - Sem movimento)
+                setEstado(EstadoCrianca.PEGAR_BOLA);
+                cesto.pegarBola();
+                temBola = true;
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -163,6 +172,10 @@ public class Crianca extends Thread {
 
     private void setEstado(EstadoCrianca novoEstado) {
         this.estado = novoEstado;
+        // Resetar tempo restante ao entrar em estados de bloqueio (espera no cesto)
+        if (novoEstado == EstadoCrianca.PEGAR_BOLA || novoEstado == EstadoCrianca.GUARDAR_BOLA) {
+            this.tempoRestanteSec = 0;
+        }
         Logger.log("Criança " + id + " -> " + novoEstado.getLabel());
     }
 
