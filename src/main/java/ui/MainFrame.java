@@ -4,22 +4,28 @@ import config.Config;
 import core.Crianca;
 import simulation.Engine;
 import util.Logger;
+import monitor.ResourceMonitor;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class MainFrame extends JFrame {
     private final Engine engine = new Engine();
+    // private final ResourceMonitor resourceMonitor = new ResourceMonitor();
+    
     private final SimulationPanel simulationPanel;
     private final ControlPanel controlPanel;
     private final ConsolePanel consolePanel;
+    // private final MonitorPanel monitorPanel;
     private int idCounter = 1;
 
     public MainFrame() {
-        setTitle("Brincadeira de Crianças - Simulação Refinada");
+        setTitle("Brincadeira de Crianças - Simulação de SO");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        // Responsividade: 90% largura, 85% altura
+        // Iniciar monitoramento (Comentado para remover da UI)
+        // resourceMonitor.start();
+        
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = (int) (screenSize.width * 0.9);
         int height = (int) (screenSize.height * 0.85);
@@ -28,25 +34,32 @@ public class MainFrame extends JFrame {
         
         setLayout(new BorderLayout());
 
-        // 1. Grid (Centro)
+        // 1. Centro: Grid (Original)
         simulationPanel = new SimulationPanel(engine);
+        // monitorPanel = new MonitorPanel(resourceMonitor);
+        
+        // JSplitPane centerSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, simulationPanel, monitorPanel);
+        // centerSplit.setResizeWeight(0.8);
+        // centerSplit.setDividerLocation((int)(width * 0.8));
+        // add(centerSplit, BorderLayout.CENTER);
+        
         add(simulationPanel, BorderLayout.CENTER);
 
-        // 2. Painel Inferior (Console + Controles)
+        // 2. Base: Console + Controles
         consolePanel = new ConsolePanel();
         controlPanel = new ControlPanel(engine, 
             (k, modo) -> startSimulation(k, modo),
             params -> addCrianca(params)
         );
         
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, consolePanel, controlPanel);
-        splitPane.setResizeWeight(0.6); // 60% para o console
-        splitPane.setDividerLocation((int)(width * 0.6));
+        JSplitPane bottomSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, consolePanel, controlPanel);
+        bottomSplit.setResizeWeight(0.6);
+        bottomSplit.setDividerLocation((int)(width * 0.6));
         
-        JPanel bottomPanel = new JPanel(new BorderLayout());
-        bottomPanel.setPreferredSize(new Dimension(width, 220)); // Aumentado para acomodar os novos controles
-        bottomPanel.add(splitPane, BorderLayout.CENTER);
-        add(bottomPanel, BorderLayout.SOUTH);
+        JPanel bottomContainer = new JPanel(new BorderLayout());
+        bottomContainer.setPreferredSize(new Dimension(width, 220));
+        bottomContainer.add(bottomSplit, BorderLayout.CENTER);
+        add(bottomContainer, BorderLayout.SOUTH);
 
         setVisible(true);
     }
