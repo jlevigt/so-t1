@@ -1,14 +1,14 @@
-package model;
+package core;
 
-public enum Estado {
-    AGUARDANDO_BOLA("Aguardando bola"),
+public enum EstadoCrianca {
+    PEGAR_BOLA("Pegando Bola"),
     BRINCANDO("Brincando"),
-    AGUARDANDO_ESPACO("Aguardando espaço"),
+    GUARDAR_BOLA("Guardando Bola"),
     DESCANSANDO("Descansando");
 
     private final String label;
 
-    Estado(String label) {
+    EstadoCrianca(String label) {
         this.label = label;
     }
 

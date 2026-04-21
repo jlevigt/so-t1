@@ -7,27 +7,13 @@ repositories {
     mavenCentral()
 }
 
-// Manual JavaFX 21 dependencies (LTS)
-def javafxVersion = "21"
-def os = "linux"
-
 dependencies {
-    implementation "org.openjfx:javafx-controls:${javafxVersion}:${os}"
-    implementation "org.openjfx:javafx-fxml:${javafxVersion}:${os}"
-    implementation "org.openjfx:javafx-graphics:${javafxVersion}:${os}"
-    implementation "org.openjfx:javafx-base:${javafxVersion}:${os}"
 }
 
 // Source compatibility
 sourceCompatibility = 17
 targetCompatibility = 17
 
-// Run configuration for JavaFX modules
 run {
-    doFirst {
-        jvmArgs = [
-            '--module-path', classpath.asPath,
-            '--add-modules', 'javafx.controls,javafx.fxml'
-        ]
-    }
+    standardInput = System.in
 }
