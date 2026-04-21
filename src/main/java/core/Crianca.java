@@ -38,40 +38,38 @@ public class Crianca extends Thread {
 
     private void inicializarSpawnDeterministico(int id) {
         int center = Config.GRID_SIZE / 2; // 8
-        int ringDistance = (Config.BASKET_SIZE / 2) + 1; // 2 + 1 = 3
+        int ringDistance = (Config.BASKET_SIZE / 2) + 1; // 3
         
         int startX = center - ringDistance; // 5
         int endX = center + ringDistance;   // 11
         int startY = center - ringDistance; // 5
         int endY = center + ringDistance;   // 11
 
-        // Sequência ao redor do anel (5,5) -> (11,5) -> (11,11) -> (5,11) -> (5,6)
-        // Usar ID para percorrer o anel de forma determinística
-        int currentId = id - 1; // 0 a 19
+        int currentId = id - 1; // 0 to 19
+        int side = currentId / 5;   // 0: top, 1: right, 2: bottom, 3: left
+        int posInSide = currentId % 5; // 0 to 4
         
-        // Top row
-        if (currentId < 7) {
-            gridX = startX + currentId;
-            gridY = startY;
-            dxOut = 0; dyOut = -1;
-        } 
-        // Right side
-        else if (currentId < 13) {
-            gridX = endX;
-            gridY = startY + (currentId - 6);
-            dxOut = 1; dyOut = 0;
-        }
-        // Bottom row
-        else if (currentId < 19) {
-            gridX = endX - (currentId - 12);
-            gridY = endY;
-            dxOut = 0; dyOut = 1;
-        }
-        // Left side
-        else {
-            gridX = startX;
-            gridY = endY - (currentId - 18);
-            dxOut = -1; dyOut = 0;
+        switch (side) {
+            case 0 -> { // Top row (excluding corners)
+                gridX = startX + 1 + posInSide; // 6, 7, 8, 9, 10
+                gridY = startY; // 5
+                dxOut = 0; dyOut = -1;
+            }
+            case 1 -> { // Right side (excluding corners)
+                gridX = endX; // 11
+                gridY = startY + 1 + posInSide; // 6, 7, 8, 9, 10
+                dxOut = 1; dyOut = 0;
+            }
+            case 2 -> { // Bottom row (excluding corners)
+                gridX = endX - 1 - posInSide; // 10, 9, 8, 7, 6
+                gridY = endY; // 11
+                dxOut = 0; dyOut = 1;
+            }
+            case 3 -> { // Left side (excluding corners)
+                gridX = startX; // 5
+                gridY = endY - 1 - posInSide; // 10, 9, 8, 7, 6
+                dxOut = -1; dyOut = 0;
+            }
         }
 
         this.spawnX = gridX;
