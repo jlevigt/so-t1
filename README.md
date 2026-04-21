@@ -27,6 +27,43 @@ Este projeto simula o problema de concorrência "Brincadeira de Crianças" utili
 - `config/`: Configurações globais e constantes do sistema.
 - `util/`: Utilitários (Logger thread-safe).
 
+## 🔐 Sincronização com Semáforos
+O projeto utiliza o modelo **Produtor-Consumidor** para gerenciar o acesso ao cesto. São utilizados três semáforos para garantir a exclusão mútua e a sincronização de estados:
+
+1.  **`semBolas`**: Contador de recursos (bolas disponíveis). Inicializado com `0`.
+2.  **`semEspacos`**: Contador de slots vazios. Inicializado com a capacidade `k`.
+3.  **`mutex`**: Binário (0 ou 1). Garante que apenas uma thread altere o contador interno por vez.
+
+### Lógica em Pseudo-código
+
+#### Pegar Bola (Criança quer brincar)
+```pascal
+procedimento pegarBola()
+    P(semBolas)   // Aguarda até ter pelo menos uma bola
+    P(mutex)      // Garante acesso exclusivo ao cesto
+    
+    quantidadeBolas := quantidadeBolas - 1
+    
+    V(mutex)      // Libera o cesto
+    V(semEspacos) // Sinaliza que um espaço foi liberado
+fim
+```
+
+#### Colocar Bola (Criança vai descansar)
+```pascal
+procedimento colocarBola()
+    P(semEspacos) // Aguarda até ter espaço no cesto
+    P(mutex)      // Garante acesso exclusivo ao cesto
+    
+    quantidadeBolas := quantidadeBolas + 1
+    
+    V(mutex)      // Libera o cesto
+    V(semBolas)   // Sinaliza que uma nova bola está disponível
+fim
+```
+
+> **Nota**: No modo **Bloqueante**, a operação `P()` suspende a thread. No modo **Busy-Wait**, `P()` é implementado como um loop ativo que testa o semáforo continuamente.
+
 ## 🛠️ Como Executar
 Certifique-se de ter o **JDK 17** ou superior instalado.
 
