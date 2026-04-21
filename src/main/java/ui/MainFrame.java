@@ -44,7 +44,7 @@ public class MainFrame extends JFrame {
         splitPane.setDividerLocation((int)(width * 0.6));
         
         JPanel bottomPanel = new JPanel(new BorderLayout());
-        bottomPanel.setPreferredSize(new Dimension(width, 180)); // Aumentado um pouco para acomodar controles
+        bottomPanel.setPreferredSize(new Dimension(width, 220)); // Aumentado para acomodar os novos controles
         bottomPanel.add(splitPane, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
 
