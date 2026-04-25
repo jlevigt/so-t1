@@ -16,7 +16,7 @@ public class Config {
         }
     }
 
-    public static volatile ModoExecucao modoAtual = ModoExecucao.BLOQUEANTE;
+    public static volatile ModoExecucao modoAtual = ModoExecucao.BUSY_WAIT;
     public static final int FPS_TARGET = 30;
     public static final int MAX_CRIANCAS = 20;
 

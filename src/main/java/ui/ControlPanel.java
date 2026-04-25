@@ -76,6 +76,7 @@ public class ControlPanel extends JPanel {
         panel.add(new JLabel("Modo:"), gbc);
         gbc.gridx = 1;
         comboModo = new JComboBox<>(Config.ModoExecucao.values());
+        comboModo.setSelectedItem(Config.ModoExecucao.BUSY_WAIT);
         panel.add(comboModo, gbc);
 
         gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;

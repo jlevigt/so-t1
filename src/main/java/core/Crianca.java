@@ -165,7 +165,14 @@ public class Crianca extends Thread {
 
     private void esperarBusyWait(long nanoTimeout) {
         long target = System.nanoTime() + nanoTimeout;
-        while (System.nanoTime() < target) Thread.onSpinWait();
+        while (System.nanoTime() < target) {
+            /*
+             * Thread.onSpinWait() indica ao processador que a thread está em um loop de espera ocupada.
+             * Diferente de sleep/wait, ele não cede o time-slice nem gera troca de contexto.
+             * Ref: https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Thread.html#onSpinWait()
+             */
+            Thread.onSpinWait();
+        }
     }
 
     private void setEstado(EstadoCrianca novoEstado) {

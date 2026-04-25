@@ -7,3 +7,8 @@ build
 *.tar
 bin
 out
+
+# Allow executables in dist
+!dist/
+!dist/*.jar
+!dist/*.exe

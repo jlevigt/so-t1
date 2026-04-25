@@ -1,5 +1,8 @@
-apply plugin: 'java'
-apply plugin: 'application'
+plugins {
+    id 'java'
+    id 'application'
+    id 'edu.sc.seis.launch4j' version '3.0.6'
+}
 
 mainClassName = 'ui.Launcher'
 
@@ -10,9 +13,25 @@ repositories {
 dependencies {
 }
 
-// Source compatibility
 sourceCompatibility = 17
 targetCompatibility = 17
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': mainClassName
+        )
+    }
+}
+
+launch4j {
+    mainClassName = project.mainClassName
+    outfile = "BrincadeiraCriancas.exe"
+    productName = "Brincadeira de Crianças"
+    companyName = "Projeto SO"
+    headerType = "gui"
+    jarTask = project.tasks.jar
+}
 
 run {
     standardInput = System.in

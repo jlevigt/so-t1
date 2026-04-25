@@ -36,14 +36,13 @@ public class MainFrame extends JFrame {
 
         // 1. Centro: Grid (Original)
         simulationPanel = new SimulationPanel(engine);
-        // monitorPanel = new MonitorPanel(resourceMonitor);
+        LegendPanel legendPanel = new LegendPanel();
         
-        // JSplitPane centerSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, simulationPanel, monitorPanel);
-        // centerSplit.setResizeWeight(0.8);
-        // centerSplit.setDividerLocation((int)(width * 0.8));
-        // add(centerSplit, BorderLayout.CENTER);
+        JPanel centerContainer = new JPanel(new BorderLayout());
+        centerContainer.add(simulationPanel, BorderLayout.CENTER);
+        centerContainer.add(legendPanel, BorderLayout.EAST);
         
-        add(simulationPanel, BorderLayout.CENTER);
+        add(centerContainer, BorderLayout.CENTER);
 
         // 2. Base: Console + Controles
         consolePanel = new ConsolePanel();
